@@ -47,12 +47,12 @@
     </div>
 
   </div>
-    <form method="POST">
+    <form method="POST" id="myForm">
 
   <% database_json.forEach(DATA => { %>
     <form method="POST">
-         <label for="address_0">ID:</label>
-      <input type="text" name="address_0" id="address_0" value="<%= DATA.id %>">
+         <label for="id">ID:</label>
+      <input type="text" name="id" id="id" value="<%= DATA.id %>">
       <br>
       <label for="address_0">Address 0:</label>
       <input type="text" name="address_0" id="address_0" value="<%= DATA.address_0 %>">
@@ -80,7 +80,7 @@
       <label for="address_15">Address 15:</label>
       <input type="text" name="address_15" id="address_15" value="<%= DATA.address_15 %>">
       <br>
-      <input type="submit" value="Submit">
+      <button type="button" onclick="submitForm()">Submit</button>
     </form>
   <% }); %>
 
@@ -118,6 +118,37 @@
     ErrorDisconnect.textContent = 'WebSocket connection closed, Please refresh browser to reconnect otherwise the PLC is not under monitor realtime';
     ErrorDisconnect.style.color = 'red';
     };
+
+
+
+
+    function submitForm() {
+        const form = document.getElementById('myForm');
+        console.log(form);
+        const formData = new FormData(form);
+        console.log(formData);
+
+
+          // Access individual form fields and their values
+  formData.forEach((value, key) => {
+    console.log(`${key}: ${value}`);
+  });
+
+
+        fetch('/', {
+          method: 'PUT',
+          body: formData
+        })
+          .then(response => response.json())
+          .then(data => {
+            console.log(data);
+            // Handle the response as needed
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            // Handle any errors that occur during the request
+          });
+      }
   </script>
 </body>
 </html>
