@@ -26,6 +26,7 @@
 
         socket.onclose = () => {
             console.log('WebSocket connection closed.');
+            alert("You are disconnected from the PLC monitor. Please refresh browser for re-connected for safety purpose");
         };
 
         // Function to send data to the server
