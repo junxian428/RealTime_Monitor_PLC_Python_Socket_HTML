@@ -5,6 +5,9 @@ import time
 import serial
 import datetime
 
+previous_data = ""  # global variable
+current_data = ""  # global variable
+
 
 def CheckSum(input_data):
     my_array = []
@@ -125,121 +128,140 @@ async def server(websocket, path):
                 PLC_data = ser.readline()
 
                 ####
-
+    
                 if PLC_data:
-                    #with open('../sending.txt', 'r') as file:
-                    #    first_line = file.readline().strip()
-                    first_line = "@00RR0100000140*"
-                    #print("Sending C-command: " + first_line)
-                    address_called = first_line[5:9]
-                    number_start_address = int(address_called)
-                    print("Address is called start from :" + str(number_start_address))
-                    #print(CheckSum("@10RR00040008"))
-                    #print("Byte Data Replied from PLC: " + data)
-                    data_removed = PLC_data[5:]
-                    s_str = PLC_data.decode('utf-8') # @10RR0000000000000041*
-                    with open('response.txt', 'w') as file:
-                        file.write(s_str)
                     
-                    print("PLC response : " + s_str)
-                    data_removed_byte = data_removed.decode('utf-8')
-                    #print("After removed: " + data_removed_byte) 
-                    # Response CheckSum 
-                    #print("______________________________________")
-                    return_checksum = data_removed_byte[len(data_removed_byte)-4:len(data_removed_byte)-2]
-                    print("Response Check Sum: " + return_checksum)
-                    #Calculation CheckSum
-                    #print("line 152")
-                    calculation_checksum = s_str[:len(s_str)-4]
-                    print("The input for checksum : " + str(calculation_checksum))
-                    CheckSum_Result = CheckSum(calculation_checksum)
-                    print("CheckSum : " + CheckSum_Result)
-                    ########################################
-                    #Compare the received checksum and calculated checksum
-                    if(return_checksum == CheckSum_Result):
-                        print("PLC -> Raspberry Pi. No CheckSum Error. Can proceed")
-                    else:
-                        print("PLC -> Raspberry Pi. There is checksum error")
-                    ########################################
-                    response_code = PLC_data[5:7].decode('utf-8')
-                    print("___________________________________________")
-                    print("Response Code : " + response_code)
-                    mode = PLC_data[3:5].decode('utf-8')
-                    print("Data mode : " + mode)
-                    if response_code == "00":
-                        print("Response: Normal Completion")
-        
-                        if(mode == "RR"):
-                            print("CIO AREA READ")
+                    global previous_data
+                    global current_data
+                    current_data = PLC_data
+                    if(previous_data != current_data):
+                        previous_data = current_data
+   
+                        first_line = "@00RR0100000140*"
+                        #print("Sending C-command: " + first_line)
+                        address_called = first_line[5:9]
+                        number_start_address = int(address_called)
+                        print("Address is called start from :" + str(number_start_address))
+                        #print(CheckSum("@10RR00040008"))
+                        #print("Byte Data Replied from PLC: " + data)
+                        data_removed = PLC_data[5:]
+                        s_str = PLC_data.decode('utf-8') # @10RR0000000000000041*
+                        with open('response.txt', 'w') as file:
+                            file.write(s_str)
+                        
+                        print("PLC response : " + s_str)
+                        data_removed_byte = data_removed.decode('utf-8')
+                        #print("After removed: " + data_removed_byte) 
+                        # Response CheckSum 
+                        #print("______________________________________")
+                        return_checksum = data_removed_byte[len(data_removed_byte)-4:len(data_removed_byte)-2]
+                        print("Response Check Sum: " + return_checksum)
+                        #Calculation CheckSum
+                        #print("line 152")
+                        calculation_checksum = s_str[:len(s_str)-4]
+                        print("The input for checksum : " + str(calculation_checksum))
+                        CheckSum_Result = CheckSum(calculation_checksum)
+                        print("CheckSum : " + CheckSum_Result)
+                        ########################################
+                        #Compare the received checksum and calculated checksum
+                        if(return_checksum == CheckSum_Result):
+                            print("PLC -> Raspberry Pi. No CheckSum Error. Can proceed")
+                        else:
+                            print("PLC -> Raspberry Pi. There is checksum error")
+                        ########################################
+                        response_code = PLC_data[5:7].decode('utf-8')
+                        print("___________________________________________")
+                        print("Response Code : " + response_code)
+                        mode = PLC_data[3:5].decode('utf-8')
+                        print("Data mode : " + mode)
+                        if response_code == "00":
+                            print("Response: Normal Completion")
+            
+                            if(mode == "RR"):
+                                print("CIO AREA READ")
 
-                                ############################## Do the address operation
-                            Address_Operation = calculation_checksum[7:]
-                            print(Address_Operation)
-                            print("Total Length address returned : " + str(len(Address_Operation)))
-                            print("Total Bits " + str(len(Address_Operation) * 4))
-                            number_channel = len(Address_Operation) / 4
-                            print("1 Channel = 4. That's reason why N address / 4 = N channel: " + str(number_channel))
-                            #data += str(number_channel)
+                                    ############################## Do the address operation
+                                Address_Operation = calculation_checksum[7:]
+                                print(Address_Operation)
+                                print("Total Length address returned : " + str(len(Address_Operation)))
+                                print("Total Bits " + str(len(Address_Operation) * 4))
+                                number_channel = len(Address_Operation) / 4
+                                print("1 Channel = 4. That's reason why N address / 4 = N channel: " + str(number_channel))
+                                #data += str(number_channel)
 
-                            ##############################
-                            binary_list = []
-                            for hex_char in Address_Operation:
-                                binary_string = bin(int(hex_char, 16))[2:].zfill(4)
-                                binary_list.append(binary_string)
+                                ##############################
+                                binary_list = []
+                                for hex_char in Address_Operation:
+                                    binary_string = bin(int(hex_char, 16))[2:].zfill(4)
+                                    binary_list.append(binary_string)
 
-                            #print(binary_list)
-                            data += str(binary_list)
-                            # One group = One channel = 15 bytes
-                            #grouped_list = [binary_list[i:i+4] for i in range(0, len(binary_list), 4)]
+                                #print(binary_list)
+                                current_data = str(binary_list)
+                                data += str(binary_list)
+                                # One group = One channel = 15 bytes
+                                #grouped_list = [binary_list[i:i+4] for i in range(0, len(binary_list), 4)]
 
-                            #print(grouped_list)
-                            #grouped_list_len = len(grouped_list)
-                            #print("Group list element : " + str(len(grouped_list)))
+                                #print(grouped_list)
+                                #grouped_list_len = len(grouped_list)
+                                #print("Group list element : " + str(len(grouped_list)))
 
-                            #result_dict = {}
-                            #key = number_start_address
+                                #result_dict = {}
+                                #key = number_start_address
 
-                            #for lst in grouped_list:
-                            #    result_dict[key] = lst
-                            #    key += 1
+                                #for lst in grouped_list:
+                                #    result_dict[key] = lst
+                                #    key += 1
 
-                            #print(result_dict)
-                            #result_dict[5][2] = "0100"
-                            #result_dict[5][1] = "1100"
-                            #print(result_dict[4][0])
-                            #print(result_dict[4][0][0])
+                                #print(result_dict)
+                                #result_dict[5][2] = "0100"
+                                #result_dict[5][1] = "1100"
+                                #print(result_dict[4][0])
+                                #print(result_dict[4][0][0])
 
 
-                            # Supposingly there is one way to detect PLC pulse 010101010101010
-                            #
-                            # However the scenario is the PLC could be locked by the client or the scenario where we dont likely to
-                            # modify their PLC code therefore prompt from raspberry pi should be more better
-                            # This is the way to detect one state
+                                # Supposingly there is one way to detect PLC pulse 010101010101010
+                                #
+                                # However the scenario is the PLC could be locked by the client or the scenario where we dont likely to
+                                # modify their PLC code therefore prompt from raspberry pi should be more better
+                                # This is the way to detect one state
 
-                            #if(result_dict[4][0][0] == "0"):
-                            #    print("ALERT TRIGGERING!!!!!!!!!!!!!!!!!!!!!!!!!")
-                            #    with open('error.txt', 'w') as file:
-                            #        file.write(str(1))
+                                #if(result_dict[4][0][0] == "0"):
+                                #    print("ALERT TRIGGERING!!!!!!!!!!!!!!!!!!!!!!!!!")
+                                #    with open('error.txt', 'w') as file:
+                                #        file.write(str(1))
+
+                        
+                            else:
+                                print("Uncaught Error")
+
+                        else:
+                            data += "No realtime data getting from PLC \n"
 
                     
+
+
+
+
+
+                        ######
+                        print("Sending:" + data)
+
+                        ###
+
+
+
+
+                                    
+                        await websocket.send(data)
+                        await asyncio.sleep(3)
+
                     else:
-                        print("Uncaught Error")
+                        await asyncio.sleep(3)
 
-                else:
-                    data += "No realtime data getting from PLC \n"
-
+                   
                 
 
-
-
-
-
-                ######
-
-                print("Sending:" + data)
-
-                await websocket.send(data)
-                await asyncio.sleep(3)
+                
 
             except Exception as  e:
                 data = str(e)
@@ -255,8 +277,13 @@ async def server(websocket, path):
         # Keep the client socket registered
         pass
 
+
+
+
 # Start the WebSocket server
 start_server = websockets.serve(server, "127.0.0.1", "8005")
+
+
 
 # Run the server indefinitely
 asyncio.get_event_loop().run_until_complete(start_server)

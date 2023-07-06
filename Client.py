@@ -48,4 +48,4 @@ while True:
     # close serial communication
     ser.close()
 
-    time.sleep(3) 
+    time.sleep(5) 
