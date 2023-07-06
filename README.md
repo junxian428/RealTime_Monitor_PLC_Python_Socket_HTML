@@ -76,3 +76,10 @@ HTML
 
 
 
+Wiring Diagram:
+
+![Untitled Diagram drawio (4)](https://github.com/junxian428/RealTime_Monitor_PLC_Python_Socket_HTML/assets/58724748/e2946f97-5772-4616-8143-2095a8536f34)
+
+
+
+
