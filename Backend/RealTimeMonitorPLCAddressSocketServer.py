@@ -281,7 +281,7 @@ async def server(websocket, path):
 
 
 # Start the WebSocket server
-start_server = websockets.serve(server, "127.0.0.1", "8005")
+start_server = websockets.serve(server, "localhost", "8005")
 
 
 

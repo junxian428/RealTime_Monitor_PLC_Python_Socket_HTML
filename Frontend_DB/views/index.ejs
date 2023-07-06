@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>WebSocket with EJS</title>
+  <style>
+
+    .center{
+
+      margin: auto;
+      width: 50%;
+      padding: 10px;
+
+
+
+
+    }
+  </style>
+
+
+
+</head>
+<body>
+  <div class="center">
+
+
+    
+  <div class="center">
+  <h1><u>Dashboard for monitoring</u></h1>
+    <br>
+    <div class="center">
+
+    <h3>Condition</h3>
+
+    <div id="message"><%= message %></div>
+  </div>
+
+    <br>
+    <br>
+    <div class="center">
+
+    <h3>Alarm Config</h3>
+    <br>
+    <br>
+
+      <%= database %>
+
+
+    </div>
+
+  </div>
+
+
+
+  </div>
+
+  <script>
+    const socket = new WebSocket('<%= websocketUrl %>');
+
+    socket.onopen = () => {
+      console.log('WebSocket client connected');
+    };
+
+    socket.onmessage = (event) => {
+      console.log('Received message from server:', event.data);
+      document.getElementById('message').textContent = event.data;
+    };
+
+    socket.onmessage = (event) => {
+      console.log('Received message from server:', event.data);
+      document.getElementById('message').textContent = event.data;
+    };
+
+    socket.onclose = () => {
+      console.log('WebSocket connection closed');
+      alert('WebSocket connection closed, Please refresh browser to reconnect otherwise the PLC is not under monitor realtime');
+          // Access the element by ID
+    const ErrorDisconnect = document.getElementById('message');
+
+    // Modify the element
+    ErrorDisconnect.textContent = 'WebSocket connection closed, Please refresh browser to reconnect otherwise the PLC is not under monitor realtime';
+    ErrorDisconnect.style.color = 'red';
+    };
+  </script>
+</body>
+</html>
