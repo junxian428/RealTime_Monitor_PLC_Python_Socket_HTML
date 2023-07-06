@@ -4,6 +4,7 @@ const port = 3000;
 const dotenv = require('dotenv');
 dotenv.config();
 
+app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 
 const db = require('./db');
 
