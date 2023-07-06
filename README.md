@@ -8,6 +8,61 @@ Python Backend
 
 Run python RealTimeMonitorPLCAddressSocketServer.py
 
+
+Frontend
+
+node express.js
+
+Database SQLite:
+
+Debian: sudo apt-get install sqlitebrowser
+
+sqlitebrowser
+
+
+CREATE TABLE "PLC" (
+
+	"id"	INTEGER,
+
+	"address_0"	TEXT,
+
+	"address_1"	TEXT,
+
+	"address_2"	TEXT,
+
+	"address_3"	TEXT,
+
+	"address_4"	TEXT,
+
+	"address_5"	TEXT,
+
+	"address_6"	TEXT,
+
+	"address_7"	TEXT,
+
+	"address_8"	TEXT,
+
+	"address_9"	TEXT,
+
+	"address_10"	TEXT,
+
+	"address_11"	TEXT,
+
+	"address_12"	TEXT,
+
+	"address_13"	TEXT,
+
+	"address_14"	TEXT,
+
+	"address_15"	TEXT,
+
+	PRIMARY KEY("id" AUTOINCREMENT)
+    
+);
+
+
+
+
 When there is index.html run, This python Backend will receive data from the PLC
 
 index.html is subscribing RealTimeMonitorPLCAddressSocketServer.py socket therefore it can be real time however there is some latency 
