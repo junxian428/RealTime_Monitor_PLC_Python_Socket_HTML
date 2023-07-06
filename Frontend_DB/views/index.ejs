@@ -42,13 +42,21 @@
     <br>
     <br>
 
-      <%= database %>
 
 
     </div>
 
   </div>
-
+  <% database_json.forEach(DATA => { %>
+    <li>ID: <%= DATA.id %></li>
+    <li>Address 0: <%= DATA.address_0 %></li>
+    <li>Address 1: <%= DATA.address_1 %></li>
+    <!-- Add more address properties as needed -->
+    <!-- ... -->
+    <li>Address 14: <%= DATA.address_14 %></li>
+    <li>Address 15: <%= DATA.address_15 %></li>
+    <br>
+  <% }); %>
 
 
   </div>

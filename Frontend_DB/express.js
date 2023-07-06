@@ -25,8 +25,10 @@ app.get('/', async (req, res) => {
   console.log('All address:', PLC);
 
     database =  JSON.stringify(PLC);
+    var database_json;
+    database_json = JSON.parse(database);
 
-  res.render('index', { message, database,  websocketUrl: process.env.WEBSOCKET_URL });
+  res.render('index', { message, database_json,  websocketUrl: process.env.WEBSOCKET_URL });
 
 
 });
