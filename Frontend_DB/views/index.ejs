@@ -50,35 +50,39 @@
     <form method="POST">
 
   <% database_json.forEach(DATA => { %>
-    <li>ID: <%= DATA.id %></li>
-    <li>Address 0: <%= DATA.address_0 %></li>
-    <li>Address 1: <%= DATA.address_1 %></li>
-
-    <li>Address 2: <%= DATA.address_2 %></li>
-    <li>Address 3: <%= DATA.address_3 %></li>
-    <li>Address 4: <%= DATA.address_4 %></li>
-    <li>Address 5: <%= DATA.address_5 %></li>
-    <li>Address 6: <%= DATA.address_6 %></li>
-    <!-- Add more address properties as needed -->
-    <!-- ... -->
-    <li>Address 7: <%= DATA.address_7 %></li>
-    <li>Address 8: <%= DATA.address_8 %></li>
-    <li>Address 9: <%= DATA.address_9 %></li>
-
-
-
-
-    <li>Address 10: <%= DATA.address_10 %></li>
-
-    <li>Address 11: <%= DATA.address_11 %></li>
-    <li>Address 12: <%= DATA.address_12 %></li>
-    <li>Address 13: <%= DATA.address_13 %></li>
-
-    <li>Address 14: <%= DATA.address_14 %></li>
-    <li>Address 15: <%= DATA.address_15 %></li>
-    <br>
+    <form method="POST">
+         <label for="address_0">ID:</label>
+      <input type="text" name="address_0" id="address_0" value="<%= DATA.id %>">
+      <br>
+      <label for="address_0">Address 0:</label>
+      <input type="text" name="address_0" id="address_0" value="<%= DATA.address_0 %>">
+      <br>
+      <label for="address_1">Address 1:</label>
+      <input type="text" name="address_1" id="address_1" value="<%= DATA.address_1 %>">
+      <br>
+      <label for="address_2">Address 2:</label>
+      <input type="text" name="address_2" id="address_2" value="<%= DATA.address_2 %>">
+      <br>
+      <label for="address_3">Address 3:</label>
+      <input type="text" name="address_3" id="address_3" value="<%= DATA.address_3 %>">
+      <br>
+      <label for="address_4">Address 4:</label>
+      <input type="text" name="address_4" id="address_4" value="<%= DATA.address_4 %>">
+      <br>
+      <label for="address_5">Address 5:</label>
+      <input type="text" name="address_5" id="address_5" value="<%= DATA.address_5 %>">
+      <br>
+      <label for="address_6">Address 6:</label>
+      <input type="text" name="address_6" id="address_6" value="<%= DATA.address_6 %>">
+      <br>
+      <!-- Add more address fields as needed -->
+      <!-- ... -->
+      <label for="address_15">Address 15:</label>
+      <input type="text" name="address_15" id="address_15" value="<%= DATA.address_15 %>">
+      <br>
+      <input type="submit" value="Submit">
+    </form>
   <% }); %>
-  <input type="submit" value="Submit">
 
 
 
