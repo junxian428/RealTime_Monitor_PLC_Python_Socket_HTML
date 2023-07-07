@@ -13,6 +13,9 @@ current_data = ""  # global variable
 previous_alarm = ""
 current_alarm = ""
 
+CheckSum_Error_Boolean = False
+Uncaught_Error_Boolean = False
+
 
 
 def CheckSum(input_data):
@@ -141,10 +144,56 @@ async def server(websocket, path):
                     global current_data
                     current_data = PLC_data
 
+                    data_removed = PLC_data[5:]
+                    s_str = PLC_data.decode('utf-8') # @10RR0000000000000041*
+                    with open('response.txt', 'w') as file:
+                        file.write(s_str)
+                    print("PLC response : " + s_str)
+                    data_removed_byte = data_removed.decode('utf-8')
+                    #print("After removed: " + data_removed_byte) 
+                    # Response CheckSum 
+                    #print("______________________________________")
+                    return_checksum = data_removed_byte[len(data_removed_byte)-4:len(data_removed_byte)-2]
+ 
+                    print("Response Check Sum: " + return_checksum)
+                    #Calculation CheckSum
+                    #print("line 152")
+                    calculation_checksum = s_str[:len(s_str)-4]
+                    print("The input for checksum : " + str(calculation_checksum))
+                    CheckSum_Result = CheckSum(calculation_checksum)
+                    print("CheckSum : " + CheckSum_Result)
+                    ########################################
+                    #Compare the received checksum and calculated checksum
+                    global CheckSum_Error_Boolean
+
+                    if(return_checksum == CheckSum_Result):
+                        print("PLC -> Raspberry Pi. No CheckSum Error. Can proceed")
+
+                        CheckSum_Error_Boolean = False
+
+                    else:
+                        print("PLC -> Raspberry Pi. There is checksum error")
+                        CheckSum_Error_Boolean = True
 
 
+                    #####################################Check Data to prevent spam
+                    response_code = PLC_data[5:7].decode('utf-8')
+                    print("___________________________________________")
+                    print("Response Code : " + response_code)
+                    mode = PLC_data[3:5].decode('utf-8')
+                    print("Data mode : " + mode)
+                    global Uncaught_Error_Boolean
 
-                    if(previous_data != current_data):
+                    if response_code != "00":
+                        Uncaught_Error_Boolean = True
+                    else:
+                        Uncaught_Error_Boolean = False
+                    #############################
+                    ####Three Coditons
+                    # 1. Previous PLC response not same as Current 
+                    # 2. CheckSum no error
+                    # 3. Uncaught error is not caughted
+                    if(previous_data != current_data and CheckSum_Error_Boolean != True and Uncaught_Error_Boolean != True):
                         previous_data = current_data
                         current_time = datetime.datetime.now().time()
 
@@ -162,43 +211,18 @@ async def server(websocket, path):
                         response = requests.post(url, params=params)
                         print(response.json())
 
-                        first_line = "@00RR0100000140*"
+                        #first_line = "@00RR0100000140*"
                         #print("Sending C-command: " + first_line)
-                        address_called = first_line[5:9]
-                        number_start_address = int(address_called)
-                        print("Address is called start from :" + str(number_start_address))
+                        #address_called = first_line[5:9]
+                        #number_start_address = int(address_called)
+                        #print("Address is called start from :" + str(number_start_address))
                         #print(CheckSum("@10RR00040008"))
                         #print("Byte Data Replied from PLC: " + data)
-                        data_removed = PLC_data[5:]
-                        s_str = PLC_data.decode('utf-8') # @10RR0000000000000041*
-                        with open('response.txt', 'w') as file:
-                            file.write(s_str)
+
                         
-                        print("PLC response : " + s_str)
-                        data_removed_byte = data_removed.decode('utf-8')
-                        #print("After removed: " + data_removed_byte) 
-                        # Response CheckSum 
-                        #print("______________________________________")
-                        return_checksum = data_removed_byte[len(data_removed_byte)-4:len(data_removed_byte)-2]
-                        print("Response Check Sum: " + return_checksum)
-                        #Calculation CheckSum
-                        #print("line 152")
-                        calculation_checksum = s_str[:len(s_str)-4]
-                        print("The input for checksum : " + str(calculation_checksum))
-                        CheckSum_Result = CheckSum(calculation_checksum)
-                        print("CheckSum : " + CheckSum_Result)
+                 
                         ########################################
-                        #Compare the received checksum and calculated checksum
-                        if(return_checksum == CheckSum_Result):
-                            print("PLC -> Raspberry Pi. No CheckSum Error. Can proceed")
-                        else:
-                            print("PLC -> Raspberry Pi. There is checksum error")
-                        ########################################
-                        response_code = PLC_data[5:7].decode('utf-8')
-                        print("___________________________________________")
-                        print("Response Code : " + response_code)
-                        mode = PLC_data[3:5].decode('utf-8')
-                        print("Data mode : " + mode)
+                       
                         if response_code == "00":
                             print("Response: Normal Completion")
             
@@ -350,6 +374,8 @@ async def server(websocket, path):
                         
                             else:
                                 print("Uncaught Error")
+                                global Uncaught_Error_Boolean
+                                Uncaught_Error_Boolean = True
 
                         else:
                             data += "No realtime data getting from PLC \n"

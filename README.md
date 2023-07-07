@@ -18,7 +18,11 @@ The error data mode read, etc problem.
 
 Solution: ????
 
+1- Use CheckSum if-else and boolean 
 
+2- Use if else to check response code
+
+3- Use for-loop to check byte
 
 ________________________________________________________________
 
