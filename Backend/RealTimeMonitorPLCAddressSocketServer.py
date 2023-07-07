@@ -240,7 +240,7 @@ async def server(websocket, path):
                                 conn.close()
                                 
                                 # Third Party Alert
-                                message_text = ''
+                                message_text = 'Alarm: '
 
                                 #Main Core Idea 
                                 for i in range(len(binary_list) - 1, -1, -1):
@@ -261,24 +261,25 @@ async def server(websocket, path):
 
 
                                             ###Socket Message
-                                            data += result_array[0][count+1] + " "
+                                            data += str(result_array[0][count+1]) + " "
 
                                             
                                         count += 1
-                                        
-                                bot_token = ''
-                                chat_id = '-'
+                                if(message_text != 'Alarm: '):
+                                    bot_token = ''
+                                    chat_id = ''
 
-                                url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
-                                params = {
-                                    'chat_id': chat_id,
-                                    'text': message_text
-                                }
 
-                                response = requests.post(url, params=params)
-                                print(response.json())
+                                    url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
+                                    params = {
+                                        'chat_id': chat_id,
+                                        'text': message_text
+                                    }
 
-                                data += "third Party response (important it will affect the third party alert): "  + response.json()
+                                    response = requests.post(url, params=params)
+                                    print(response.json())
+
+                                    data += "third Party response (important it will affect the third party alert): "  + str(response.json())
 
 
                                 current_data = str(binary_list)
