@@ -10,6 +10,11 @@ previous_data = ""  # global variable
 current_data = ""  # global variable
 
 
+previous_alarm = ""
+current_alarm = ""
+
+
+
 def CheckSum(input_data):
     my_array = []
     my_hex_array = []
@@ -135,9 +140,28 @@ async def server(websocket, path):
                     global previous_data
                     global current_data
                     current_data = PLC_data
+
+
+
+
                     if(previous_data != current_data):
                         previous_data = current_data
-   
+                        current_time = datetime.datetime.now().time()
+
+                        update_text = "Updated " + str(current_time) 
+                        bot_token = ''
+                        chat_id = ''
+
+
+                        url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
+                        params = {
+                            'chat_id': chat_id,
+                            'text': update_text
+                        }
+
+                        response = requests.post(url, params=params)
+                        print(response.json())
+
                         first_line = "@00RR0100000140*"
                         #print("Sending C-command: " + first_line)
                         address_called = first_line[5:9]
@@ -240,7 +264,7 @@ async def server(websocket, path):
                                 conn.close()
                                 
                                 # Third Party Alert
-                                message_text = 'Alarm: '
+                                message_text = ''
 
                                 #Main Core Idea 
                                 for i in range(len(binary_list) - 1, -1, -1):
@@ -265,7 +289,13 @@ async def server(websocket, path):
 
                                             
                                         count += 1
-                                if(message_text != 'Alarm: '):
+                                
+                                global current_alarm, previous_alarm
+                                current_alarm = message_text
+                                
+                                if(message_text != '' or current_alarm != previous_alarm):
+   
+
                                     bot_token = ''
                                     chat_id = ''
 
@@ -280,6 +310,7 @@ async def server(websocket, path):
                                     print(response.json())
 
                                     data += "third Party response (important it will affect the third party alert): "  + str(response.json())
+                                    previous_alarm != current_alarm
 
 
                                 current_data = str(binary_list)
