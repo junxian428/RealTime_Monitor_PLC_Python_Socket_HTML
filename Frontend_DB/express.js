@@ -32,7 +32,7 @@ app.post('/update', (req, res) => {
   //const id = parseInt(req.params.id);
   const address_5 = req.body.address_5;
   const address_6= req.body.address_6;
-  console.log(id + '  ' + address_0 + address_1 + address_2 + address_3 + address_4 + address_5 + address_6);
+  //console.log(id + '  ' + address_0 + address_1 + address_2 + address_3 + address_4 + address_5 + address_6);
   const sql = `UPDATE PLC
   SET address_0 = ?,
       address_1 = ?,
@@ -52,18 +52,18 @@ app.post('/update', (req, res) => {
       address_15 = ?
   WHERE id = ?`;
 
-  const address_7 = "";
-  const address_8 = "";
-  const address_9 = "";
-  const address_10 = "";
+  const address_7 = req.body.address_7;
+  const address_8 = req.body.address_8;
+  const address_9 = req.body.address_9;
+  const address_10 = req.body.address_10;
 
-  const address_11 = "";
-  const address_12= "";
-  const address_13 = "";
+  const address_11 = req.body.address_11;
+  const address_12= req.body.address_12;
+  const address_13 = req.body.address_13;
 
 
-  const address_14 = "";
-  const address_15 = "";
+  const address_14 = req.body.address_14;
+  const address_15 = req.body.address_15;
 
 
 
