@@ -195,7 +195,20 @@ async def server(websocket, path):
                                     binary_string = bin(int(hex_char, 16))[2:].zfill(4)
                                     binary_list.append(binary_string)
 
-                                #print(binary_list)
+                                #print(binary_list[0])
+                                # Assuming binary_list is a two-dimensional array
+
+                                count = 0
+
+                                for i in range(len(binary_list) - 1, -1, -1):
+                                    for j in range(len(binary_list[i]) - 1, -1, -1):
+                                        print("When i is " + str(i) + " " + " When j is " + str(j)+ "   This is the element " + str(count)+ " value"+ binary_list[i][j])
+                                        if(binary_list[i][j] == "1"):
+                                            print("trigger alarm " + str(count))
+                                            
+                                        count += 1
+                                        
+
                                 current_data = str(binary_list)
                                 data += str(binary_list)
                                 # One group = One channel = 15 bytes
