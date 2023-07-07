@@ -1,5 +1,27 @@
 #RealTime_Monitor_PLC_Python_Socket_HTML
 
+Some protocol challenging. WHen the hardware prompts too fast,
+
+It will cause the protocol data error 
+
+for example:
+
+Normal condition:
+
+
+-> Error caused by Bit issue and checksum error 
+-> Bit issue could cause 
+
+The error data mode read, etc problem.
+
+
+
+Solution: ????
+
+
+
+________________________________________________________________
+
 python Client.py  (Keep prompt PLC address output 100)
 
 Then 
