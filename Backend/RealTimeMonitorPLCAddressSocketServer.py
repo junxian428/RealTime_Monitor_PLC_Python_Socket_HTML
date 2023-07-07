@@ -4,6 +4,7 @@ import requests
 import time
 import serial
 import datetime
+import sqlite3
 
 previous_data = ""  # global variable
 current_data = ""  # global variable
@@ -199,15 +200,86 @@ async def server(websocket, path):
                                 # Assuming binary_list is a two-dimensional array
 
                                 count = 0
+                                # Connect to the SQLite database
+                                conn = sqlite3.connect('../Frontend_DB/data.db')
 
+                                # Create a cursor object to execute SQL queries
+                                cursor = conn.cursor()
+
+                                # Execute a SELECT query
+                                cursor.execute('SELECT * FROM PLC')
+
+                                # Fetch all rows from the result set
+                                rows = cursor.fetchall()
+                                result_array = []
+
+                                # Process the rows
+                                for row in rows:
+                                    result_array.append(row)
+
+                                #print(result_array[0][1])
+                                # Convert tuples to string arrays
+                                #result_string_arrays = [list(map(str, row)) for row in result_array]
+
+                                # Print the result string arrays
+                                #for row in result_string_arrays:
+                                #    print(row)
+
+                                # Print the result_array
+                                #print(result_string_arrays[0][1])
+                                # Print the result array
+                                #(1, 'Lithium', 'Nitrogen ', 'Hydrogen Gas', 'Neon', 'Magnesium', 'Sodium', 'Aluminium', 'Potassium', '', 'Uranium', '', '', '', '', 'Titanium', 'Xenon')
+                                #for row in result_array:
+                                #    print(row)
+
+
+
+                                #print(result_array)
+                                # Close the cursor and the database connection
+                                cursor.close()
+                                conn.close()
+                                
+                                # Third Party Alert
+                                message_text = ''
+
+                                #Main Core Idea 
                                 for i in range(len(binary_list) - 1, -1, -1):
                                     for j in range(len(binary_list[i]) - 1, -1, -1):
                                         print("When i is " + str(i) + " " + " When j is " + str(j)+ "   This is the element " + str(count)+ " value"+ binary_list[i][j])
                                         if(binary_list[i][j] == "1"):
                                             print("trigger alarm " + str(count))
+                                            # Read SQLite DB to identify alarm message
+                                            print(result_array[0][count+1])
+                                            current_time = datetime.datetime.now().time()
+
+                                            message_text += str(current_time) +  "  : "  + result_array[0][count+1] + " \n"
+
+
+                                            ###API Third Party
+
+
+
+
+                                            ###Socket Message
+                                            data += result_array[0][count+1] + " "
+
                                             
                                         count += 1
                                         
+                                bot_token = ''
+                                chat_id = '-'
+
+                                url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
+                                params = {
+                                    'chat_id': chat_id,
+                                    'text': message_text
+                                }
+
+                                response = requests.post(url, params=params)
+                                print(response.json())
+
+                                data += "third Party response (important it will affect the third party alert): "  + response.json()
+
 
                                 current_data = str(binary_list)
                                 data += str(binary_list)
